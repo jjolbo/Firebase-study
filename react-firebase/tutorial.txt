@@ -1,1 +1,9 @@
-
+주의사항
+1. Firebase Realtime DB에 들어가면 규칙이 있는데 이 부분을 반드시 true로 바꿀 것.
+=> 그래야 데이터에 대한 접근이 가능하다. 
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
