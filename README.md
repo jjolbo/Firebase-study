@@ -9,3 +9,6 @@ develop with Firebase and **"anything"**
 - [x] react에서 위,경도 정보를 받아 firebase db에 저장
 - [x] python에서 firebase db에서 위,경도 -> api에 맞는 x,y좌표로 변환 `trans.py`
 - [x] python에서 google geocode 이용하여 위,경도를 주소로 변환 `google_geocode.py`
+
+
+- google geocode 이용할 때, `Geocoding API, Geolocation API, Places API, Maps JavaScript API`를 모두 설정해야 사용이 가능하다. 
