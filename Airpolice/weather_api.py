@@ -37,11 +37,12 @@ class WeatherAPI:
         Firebase = kFirebase.Firebase()
         # Firebase.firebase_db()
 
-        latitude = Firebase.load('area/latitude')
-        longitude = Firebase.load('area/longitude')
+        latitude = Firebase.load('outside/area/latitude')
+        longitude = Firebase.load('outside/area/longitude')
+
 
         x, y = self.trans_coordinate(latitude,longitude)
-        address, local, si = self.get_address('ko', latitude, longitude, "google-map-apikey")
+        address, local, si = self.get_address('ko', latitude, longitude, "***")
 
         Firebase.update({'now_location': address})
         # Firebase.update_address(address)
@@ -52,8 +53,10 @@ class WeatherAPI:
         # print(address)
 
         url = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastGrib?"
-        ServiceKey = "ServiceKey=************************************"
+        ServiceKey = "ServiceKey=************"
         today = t.localtime()
+
+        print(today)
 
         year = str(today.tm_year)
         day = ''
@@ -71,7 +74,10 @@ class WeatherAPI:
 
 
         base_date = "&base_date=" + str(year) + str(mon) + str(day)
-        base_time = "&base_time=" + str(int(time) - 1) + "45"
+        if time - 1 < 0:
+            base_time = "&base_time=" + "23" + "45"
+        else:
+            base_time = "&base_time=" + str(int(time) - 1) + "45"
         nx = "&nx=" + str(x)
         ny = "&ny=" + str(y)
         url = url + ServiceKey + base_date + base_time + nx + ny + "&pageNo=1" + "&numOfRows=10&_type=json"
@@ -104,3 +110,7 @@ class WeatherAPI:
 
         else:
             print("Error code: " + response.status_code)
+
+if __name__ == '__main__':
+    w = WeatherAPI()
+    w._main()
