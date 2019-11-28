@@ -11,13 +11,16 @@ class WeatherAPI:
 
     def get_address(self, country, lat, lng, api_key):
         url = "https://maps.googleapis.com/maps/api/geocode/json?language=%s&latlng=%f,%f&key=%s" % (country, lat, lng, api_key)
+        print(url)
         r = requests.get(url).json()
 
         new_full_adr = r['results'][1]['formatted_address']
-        old_full_adr = r['results'][0]['formatted_address']
-        local = r['results'][0]['address_components'][2]['long_name']
-        si = r['results'][0]['address_components'][3]['long_name']
+        # old_full_adr = r['results'][0]['formatted_address']
+        local = r['results'][1]['address_components'][2]['long_name']
+        si = r['results'][1]['address_components'][3]['long_name']
         si = si[:2]
+
+        # print(new_full_adr, local, si)
 
         return new_full_adr, local, si
 
@@ -35,14 +38,15 @@ class WeatherAPI:
         #     return
 
         Firebase = kFirebase.Firebase()
-        # Firebase.firebase_db()
+        Firebase.firebase_db()
 
         latitude = Firebase.load('outside/area/latitude')
         longitude = Firebase.load('outside/area/longitude')
 
 
         x, y = self.trans_coordinate(latitude,longitude)
-        address, local, si = self.get_address('ko', latitude, longitude, "******************")
+        address, local, si = self.get_address('ko', latitude, longitude, "")
+        print(address, local, si)
 
         Firebase.update({'now_location': address})
         # Firebase.update_address(address)
@@ -53,7 +57,7 @@ class WeatherAPI:
         # print(address)
 
         url = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2/ForecastGrib?"
-        ServiceKey = "ServiceKey=*******************************"
+        ServiceKey = "ServiceKey="
         today = t.localtime()
 
         print(today)
