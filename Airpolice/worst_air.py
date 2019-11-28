@@ -5,14 +5,14 @@ import datetime
 class Check_mise:
     def date_time(self):
         dt = datetime.datetime.now()
-        month = int(dt.month)
-        day = int(dt.day)
-        # month = 9
-        # day = 18
-        hour = dt.hour
-        min = dt.minute
-        # hour = 4
-        # min = 37
+        # month = int(dt.month)
+        # day = int(dt.day)
+        month = 11
+        day = 6
+        # hour = dt.hour
+        # min = dt.minute
+        hour = 23
+        min = 57
         if day < 10:
             day = '0' + str(day)
             print(day)
@@ -34,8 +34,7 @@ class Check_mise:
         tmp_temp = []
         tmp_humid = []
 
-        for i in range(1):
-
+        for i in range(3):
             d_hour = 0
             d_min = 0
 
@@ -46,19 +45,19 @@ class Check_mise:
                     key = d_hour -1
                     print(type(round(float(sum(tmp_temp)) /12,2)))
 
-                    Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
+                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
                         'pm10Value': round(float(sum(tmp_pm10)) / 12, 2)
                     })
 
-                    Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
+                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
                         'pm25Value': round(float(sum(tmp_pm25)) / 12, 2)
                     })
 
-                    Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
+                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
                         'temp': round(float(sum(tmp_temp)) / 12, 2)
                     })
 
-                    Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
+                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
                         'humid': round(float(sum(tmp_humid)) / 12, 2)
                     })
 
@@ -112,54 +111,55 @@ class Check_mise:
         total_pm10 = []
         total_humid = []
 
-        if hour == 23:
-            while min < 59:
-                pm10path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'pm10Value'
-                pm10value = Firebase.load(pm10path)
-                # print(pm10value)
-                if pm10value is not None:
+        for i in range(len(area)):
+            if hour == 23:
+                while d_hour < 24:
+                    pm10path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'pm10Value'
+                    pm10value = Firebase.load(pm10path)
                     # print(pm10value)
-                    total_pm10.append(pm10value)
+                    if pm10value is not None:
+                        # print(pm10value)
+                        total_pm10.append(pm10value)
 
-                pm25path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'pm25Value'
-                pm25value = Firebase.load(pm25path)
-                if pm25value is not None:
-                    # print(pm25value)
-                    total_pm25.append(pm25value)
+                    pm25path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'pm25Value'
+                    pm25value = Firebase.load(pm25path)
+                    if pm25value is not None:
+                        # print(pm25value)
+                        total_pm25.append(pm25value)
 
-                temp_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'temp'
-                temp_value = Firebase.load(temp_path)
-                if temp_value is not None:
-                    total_temp.append(temp_value)
-                    # print(temp_value)
+                    temp_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'temp'
+                    temp_value = Firebase.load(temp_path)
+                    if temp_value is not None:
+                        total_temp.append(temp_value)
+                        # print(temp_value)
 
-                humid_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'humid'
-                humid_value = Firebase.load(humid_path)
-                if humid_value is not None:
-                    # print(humid_value)
-                    total_humid.append(humid_value)
+                    humid_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(d_hour) + '/' + 'humid'
+                    humid_value = Firebase.load(humid_path)
+                    if humid_value is not None:
+                        # print(humid_value)
+                        total_humid.append(humid_value)
 
-                d_hour += 1
+                    d_hour += 1
 
 
-            Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/day', {
-                'pm10Value': round(float(sum(total_pm10)) / 24, 2)
-            })
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/day', {
+                    'pm10Value': round(float(sum(total_pm10)) / 24, 2)
+                })
 
-            Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/day', {
-                'pm25Value': round(float(sum(total_pm25)) / 24, 2)
-            })
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/day', {
+                    'pm25Value': round(float(sum(total_pm25)) / 24, 2)
+                })
 
-            Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/day', {
-                'temp': round(float(sum(total_temp)) / 24, 2)
-            })
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/day', {
+                    'temp': round(float(sum(total_temp)) / 24, 2)
+                })
 
-            Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/day', {
-                'humid': round(float(sum(total_humid)) / 24, 2)
-            })
-        else:
-            print(2)
-            return
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/day', {
+                    'humid': round(float(sum(total_humid)) / 24, 2)
+                })
+            else:
+                print(2)
+                return
 
     def calc_hour(self):
 
@@ -175,32 +175,33 @@ class Check_mise:
         tmp_temp = []
         tmp_humid = []
 
-        for i in range(1):
-
-            if min == 59:
+        for i in range(3):
+            print(min)
+            if min == 55:
                 d_min = 0
-                while d_min < 56:
-                    pm10path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(hour - 1) + ':' + str(
+                while d_min < 56 and hour-1 > 0:
+                    hour -= 1
+                    pm10path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
                         d_min) + '/' + 'pm10Value'
                     pm10value = Firebase.load(pm10path)
                     # print(pm10value)
                     if pm10value is not None:
                         tmp_pm10.append(pm10value)
 
-                    pm25path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(hour - 1) + ':' + str(
+                    pm25path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
                         d_min) + '/' + 'pm25Value'
                     pm25value = Firebase.load(pm25path)
                     if pm25value is not None:
                         tmp_pm25.append(pm25value)
 
-                    temp_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(hour - 1) + ':' + str(
+                    temp_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
                         d_min) + '/' + 'temp'
                     temp_value = Firebase.load(temp_path)
                     if temp_value is not None:
                         tmp_temp.append(temp_value)
                     print(temp_value)
 
-                    humid_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(hour - 1) + ':' + str(
+                    humid_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
                         d_min) + '/' + 'humid'
                     humid_value = Firebase.load(humid_path)
                     if humid_value is not None:
@@ -208,19 +209,19 @@ class Check_mise:
 
                     d_min += 5
 
-                Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(hour - 1) + '/', {
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'pm10Value': round(float(sum(tmp_pm10)) / 12, 2)
                 })
 
-                Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(hour - 1) + '/', {
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'pm25Value': round(float(sum(tmp_pm25)) / 12, 2)
                 })
 
-                Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(hour - 1) + '/', {
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'temp': round(float(sum(tmp_temp)) / 12, 2)
                 })
 
-                Firebase.wa_update('inside/' + area[1] + '/' + str(month) + str(day) + '/ave/' + str(hour - 1) + '/', {
+                Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'humid': round(float(sum(tmp_humid)) / 12, 2)
                 })
             else:
