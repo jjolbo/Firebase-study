@@ -5,96 +5,21 @@ import datetime
 class Check_mise:
     def date_time(self):
         dt = datetime.datetime.now()
-        # month = int(dt.month)
-        # day = int(dt.day)
-        month = 11
-        day = 6
-        # hour = dt.hour
-        # min = dt.minute
-        hour = 23
-        min = 57
+        month = int(dt.month)
+        day = int(dt.day)
+        #month = 11
+        #day = 1
+        hour = dt.hour
+        min = dt.minute
+        #hour = 10
+        #min = 55
         if day < 10:
             day = '0' + str(day)
-            print(day)
+            print('day',day)
 
         min = min - (min % 5)
 
         return month, day, hour, min
-
-    def calc_hour_temp(self):
-        month, day, hour, min = self.date_time()
-
-        Firebase = kFirebase.Firebase()
-        # Firebase.firebase_db()
-
-        area = ['kitchen', 'livingroom', 'room']
-
-        tmp_pm10 = []
-        tmp_pm25 = []
-        tmp_temp = []
-        tmp_humid = []
-
-        for i in range(3):
-            d_hour = 0
-            d_min = 0
-
-            while d_hour < hour or d_hour == 24:
-                if d_min == 60:
-                    d_min = 0
-                    d_hour += 1
-                    key = d_hour -1
-                    print(type(round(float(sum(tmp_temp)) /12,2)))
-
-                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
-                        'pm10Value': round(float(sum(tmp_pm10)) / 12, 2)
-                    })
-
-                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
-                        'pm25Value': round(float(sum(tmp_pm25)) / 12, 2)
-                    })
-
-                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
-                        'temp': round(float(sum(tmp_temp)) / 12, 2)
-                    })
-
-                    Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(key) + '/', {
-                        'humid': round(float(sum(tmp_humid)) / 12, 2)
-                    })
-
-                    tmp_pm10.clear()
-                    tmp_pm25.clear()
-                    tmp_humid.clear()
-                    tmp_temp.clear()
-
-                if d_hour == hour:
-                    break
-
-                print(d_hour, d_min)
-
-
-                pm10path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(d_hour) + ':' +  str(d_min) + '/' + 'pm10Value'
-                pm10value = Firebase.load(pm10path)
-                #print(pm10value)
-                if pm10value is not None:
-                    tmp_pm10.append(pm10value)
-
-                pm25path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(d_hour) + ':' +  str(d_min) + '/' + 'pm25Value'
-                pm25value = Firebase.load(pm25path)
-                if pm25value is not None:
-                    tmp_pm25.append(pm25value)
-
-                temp_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(d_hour) + ':' +  str(d_min) + '/' + 'temp'
-                temp_value = Firebase.load(temp_path)
-                if temp_value is not None:
-                    tmp_temp.append(temp_value)
-                print(temp_value)
-
-                humid_path = 'inside/' + area[1] + '/' + str(month) + str(day) + '/' + str(d_hour) + ':' +  str(d_min) + '/' + 'humid'
-                humid_value = Firebase.load(humid_path)
-                if humid_value is not None:
-                    tmp_humid.append(humid_value)
-
-                d_min += 5
 
     def calc_day(self):
         month, day, hour, min = self.date_time()
@@ -105,7 +30,6 @@ class Check_mise:
         area = ['kitchen', 'livingroom', 'room']
 
         d_hour = 0
-
         total_temp = []
         total_pm25 = []
         total_pm10 = []
@@ -164,9 +88,9 @@ class Check_mise:
     def calc_hour(self):
 
         month, day, hour, min = self.date_time()
-
+        print(month, day, hour, min)
         Firebase = kFirebase.Firebase()
-        # Firebase.firebase_db()
+
 
         area = ['kitchen', 'livingroom', 'room']
 
@@ -175,40 +99,44 @@ class Check_mise:
         tmp_temp = []
         tmp_humid = []
 
+        print('m', min)
+        # d_min = 0
+
         for i in range(3):
-            print(min)
-            if min == 55:
+            if min >= 55:
                 d_min = 0
-                while d_min < 56 and hour-1 > 0:
-                    hour -= 1
-                    pm10path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
-                        d_min) + '/' + 'pm10Value'
+                while d_min < 56:
+                    # print(100)
+                    pm10path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(d_min) + '/' + 'pm10Value'
                     pm10value = Firebase.load(pm10path)
                     # print(pm10value)
                     if pm10value is not None:
                         tmp_pm10.append(pm10value)
 
-                    pm25path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
-                        d_min) + '/' + 'pm25Value'
+                    pm25path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(d_min) + '/' + 'pm25Value'
                     pm25value = Firebase.load(pm25path)
                     if pm25value is not None:
                         tmp_pm25.append(pm25value)
 
-                    temp_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
-                        d_min) + '/' + 'temp'
+                    temp_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(d_min) + '/' + 'temp'
                     temp_value = Firebase.load(temp_path)
                     if temp_value is not None:
                         tmp_temp.append(temp_value)
-                    print(temp_value)
+                    # print('temp',temp_value)
 
-                    humid_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(
-                        d_min) + '/' + 'humid'
+                    humid_path = 'inside/' + area[i] + '/' + str(month) + str(day) + '/' + str(hour) + ':' + str(d_min) + '/' + 'humid'
                     humid_value = Firebase.load(humid_path)
                     if humid_value is not None:
                         tmp_humid.append(humid_value)
 
                     d_min += 5
 
+                print(tmp_temp)
+                print(tmp_humid)
+                print(tmp_pm10)
+                print(tmp_pm25)
+
+                print(area[i], month, day, hour)
                 Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'pm10Value': round(float(sum(tmp_pm10)) / 12, 2)
                 })
@@ -224,17 +152,19 @@ class Check_mise:
                 Firebase.wa_update('inside/' + area[i] + '/' + str(month) + str(day) + '/ave/' + str(hour) + '/', {
                     'humid': round(float(sum(tmp_humid)) / 12, 2)
                 })
-            else:
-                print(1)
-                return
+
+        else:
+            print(1)
+            return
 
     def _main(self):
         Firebase = kFirebase.Firebase()
-        Firebase.firebase_db()
+        # Firebase.firebase_db()
+
         self.calc_hour()
-        self.calc_day()
+        #self.calc_day()
 
 
-if __name__ == '__main__':
-    ch = Check_mise()
-    ch._main()
+# if __name__ == '__main__':
+#     ch = Check_mise()
+#     ch._main()
